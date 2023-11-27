@@ -3,6 +3,8 @@ import { Keys } from "../interfaces/keys";
 
 // Player class
 export class Player {
+  private standingFrames: PIXI.Texture[];
+  private movingFrames: PIXI.Texture[];
   private animatedSprite: PIXI.AnimatedSprite;
   private keys: Keys;
   private playerSpeed: number;
@@ -14,13 +16,36 @@ export class Player {
 
   constructor(app: PIXI.Application) {
     this.app = app;
-    const frames = [];
-    for (let i = 1; i < 5; i++) {
-      frames.push(
-        PIXI.Texture.from(`images/knight/standing/knight_standing${i}.png`)
-      );
-    }
-    this.animatedSprite = new PIXI.AnimatedSprite(frames);
+    this.keys = {
+      w: false,
+      a: false,
+      s: false,
+      d: false,
+    };
+    this.playerSpeed = 5;
+    this.moveSound = document.getElementById("moveSound") as HTMLAudioElement;
+
+    // Load frames for standing animation
+    this.standingFrames = [
+      PIXI.Texture.from("images/knight/standing/knight_standing1.png"),
+      PIXI.Texture.from("images/knight/standing/knight_standing2.png"),
+      PIXI.Texture.from("images/knight/standing/knight_standing3.png"),
+      PIXI.Texture.from("images/knight/standing/knight_standing4.png"),
+    ];
+
+    // Load frames for moving animation
+    this.movingFrames = [
+      PIXI.Texture.from("images/knight/moving/knight_moving1.png"),
+      PIXI.Texture.from("images/knight/moving/knight_moving2.png"),
+      PIXI.Texture.from("images/knight/moving/knight_moving3.png"),
+      PIXI.Texture.from("images/knight/moving/knight_moving4.png"),
+      PIXI.Texture.from("images/knight/moving/knight_moving5.png"),
+      PIXI.Texture.from("images/knight/moving/knight_moving6.png"),
+      PIXI.Texture.from("images/knight/moving/knight_moving7.png"),
+      PIXI.Texture.from("images/knight/moving/knight_moving8.png"),
+    ];
+
+    this.animatedSprite = new PIXI.AnimatedSprite(this.standingFrames);
     this.animatedSprite.width = this.playerWidth;
     this.animatedSprite.height = this.playerHeight;
     this.animatedSprite.anchor.set(0.5);
@@ -30,16 +55,6 @@ export class Player {
     this.animatedSprite.play();
 
     app.stage.addChild(this.animatedSprite);
-
-    this.keys = {
-      w: false,
-      a: false,
-      s: false,
-      d: false,
-    };
-    console.log(frames);
-    this.playerSpeed = 5;
-    this.moveSound = document.getElementById("moveSound") as HTMLAudioElement;
   }
 
   public handleKeyDown(event: KeyboardEvent): void {
@@ -90,6 +105,23 @@ export class Player {
       }
       this.animatedSprite.x += this.playerSpeed;
       this.playMoveSound();
+    }
+
+    // Update animation based on movement
+    if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
+      // Switch to moving animation
+      if (this.animatedSprite.textures !== this.movingFrames) {
+        this.animatedSprite.stop();
+        this.animatedSprite.textures = this.movingFrames;
+        this.animatedSprite.play();
+      }
+    } else {
+      // If not moving, play standing animation
+      if (this.animatedSprite.textures !== this.standingFrames) {
+        this.animatedSprite.stop();
+        this.animatedSprite.textures = this.standingFrames;
+        this.animatedSprite.play();
+      }
     }
   }
 
