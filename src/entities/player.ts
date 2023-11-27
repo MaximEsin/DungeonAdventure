@@ -10,6 +10,7 @@ export class Player {
   private playerHeight: number = 100;
   private app: PIXI.Application;
   private facingRight: boolean = true;
+  private moveSound: HTMLAudioElement;
 
   constructor(app: PIXI.Application) {
     this.app = app;
@@ -29,6 +30,8 @@ export class Player {
     };
 
     this.playerSpeed = 5;
+
+    this.moveSound = document.getElementById("moveSound") as HTMLAudioElement;
   }
 
   public handleKeyDown(event: KeyboardEvent): void {
@@ -49,6 +52,7 @@ export class Player {
         return;
       }
       this.sprite.y -= this.playerSpeed;
+      this.playMoveSound();
     }
     if (this.keys.a) {
       if (this.facingRight) {
@@ -59,12 +63,14 @@ export class Player {
         return;
       }
       this.sprite.x -= this.playerSpeed;
+      this.playMoveSound();
     }
     if (this.keys.s) {
       if (this.sprite.y > this.app.screen.height - 50) {
         return;
       }
       this.sprite.y += this.playerSpeed;
+      this.playMoveSound();
     }
     if (this.keys.d) {
       if (!this.facingRight) {
@@ -75,6 +81,17 @@ export class Player {
         return;
       }
       this.sprite.x += this.playerSpeed;
+      this.playMoveSound();
+    }
+  }
+
+  private playMoveSound(): void {
+    // Check if the audio is paused or not
+    if (this.moveSound.paused) {
+      // Reset the currentTime to start the sound from the beginning
+      this.moveSound.currentTime = 0;
+      // Play the sound
+      this.moveSound.play();
     }
   }
 }
