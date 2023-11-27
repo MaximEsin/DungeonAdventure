@@ -5,6 +5,7 @@ import { Keys } from "../interfaces/keys";
 export class Player {
   private standingFrames: PIXI.Texture[];
   private movingFrames: PIXI.Texture[];
+  private attackingFrames: PIXI.Texture[];
   private animatedSprite: PIXI.AnimatedSprite;
   private keys: Keys;
   private playerSpeed: number;
@@ -13,6 +14,7 @@ export class Player {
   private app: PIXI.Application;
   private facingRight: boolean = true;
   private moveSound: HTMLAudioElement;
+  private attackSound: HTMLAudioElement;
 
   constructor(app: PIXI.Application) {
     this.app = app;
@@ -21,9 +23,13 @@ export class Player {
       a: false,
       s: false,
       d: false,
+      v: false,
     };
     this.playerSpeed = 5;
     this.moveSound = document.getElementById("moveSound") as HTMLAudioElement;
+    this.attackSound = document.getElementById(
+      "attackSound"
+    ) as HTMLAudioElement;
 
     // Load frames for standing animation
     this.standingFrames = [
@@ -43,6 +49,20 @@ export class Player {
       PIXI.Texture.from("images/knight/moving/knight_moving6.png"),
       PIXI.Texture.from("images/knight/moving/knight_moving7.png"),
       PIXI.Texture.from("images/knight/moving/knight_moving8.png"),
+    ];
+
+    // Load frames for attacking
+    this.attackingFrames = [
+      PIXI.Texture.from("images/knight/attack/attack1.png"),
+      PIXI.Texture.from("images/knight/attack/attack2.png"),
+      PIXI.Texture.from("images/knight/attack/attack3.png"),
+      PIXI.Texture.from("images/knight/attack/attack4.png"),
+      PIXI.Texture.from("images/knight/attack/attack5.png"),
+      PIXI.Texture.from("images/knight/attack/attack6.png"),
+      PIXI.Texture.from("images/knight/attack/attack7.png"),
+      PIXI.Texture.from("images/knight/attack/attack8.png"),
+      PIXI.Texture.from("images/knight/attack/attack9.png"),
+      PIXI.Texture.from("images/knight/attack/attack10.png"),
     ];
 
     this.animatedSprite = new PIXI.AnimatedSprite(this.standingFrames);
@@ -115,6 +135,13 @@ export class Player {
         this.animatedSprite.textures = this.movingFrames;
         this.animatedSprite.play();
       }
+    } else if (this.keys.v) {
+      if (this.animatedSprite.textures !== this.attackingFrames) {
+        this.animatedSprite.stop();
+        this.animatedSprite.textures = this.attackingFrames;
+        this.animatedSprite.play();
+        this.playAttackSound();
+      }
     } else {
       // If not moving, play standing animation
       if (this.animatedSprite.textures !== this.standingFrames) {
@@ -132,6 +159,16 @@ export class Player {
       this.moveSound.currentTime = 0;
       // Play the sound
       this.moveSound.play();
+    }
+  }
+
+  private playAttackSound(): void {
+    // Check if the audio is paused or not
+    if (this.attackSound.paused) {
+      // Reset the currentTime to start the sound from the beginning
+      this.attackSound.currentTime = 0;
+      // Play the sound
+      this.attackSound.play();
     }
   }
 }
