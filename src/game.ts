@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Player } from "./player";
+import { Player } from "./entities/player";
 
 // Game class
 class Game {

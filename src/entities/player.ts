@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Keys } from "./interfaces/keys";
+import { Keys } from "../interfaces/keys";
 
 // Player class
 export class Player {
@@ -9,6 +9,7 @@ export class Player {
   private playerWidth: number = 100;
   private playerHeight: number = 100;
   private app: PIXI.Application;
+  private facingRight: boolean = true;
 
   constructor(app: PIXI.Application) {
     this.app = app;
@@ -50,6 +51,10 @@ export class Player {
       this.sprite.y -= this.playerSpeed;
     }
     if (this.keys.a) {
+      if (this.facingRight) {
+        this.sprite.scale.x *= -1;
+        this.facingRight = false;
+      }
       if (this.sprite.x < 50) {
         return;
       }
@@ -62,6 +67,10 @@ export class Player {
       this.sprite.y += this.playerSpeed;
     }
     if (this.keys.d) {
+      if (!this.facingRight) {
+        this.sprite.scale.x *= -1;
+        this.facingRight = true;
+      }
       if (this.sprite.x > this.app.screen.width - 55) {
         return;
       }
