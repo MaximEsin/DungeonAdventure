@@ -3,24 +3,33 @@ import { Keys } from "../interfaces/keys";
 
 // Player class
 export class Player {
-  private sprite: PIXI.Sprite;
+  private animatedSprite: PIXI.AnimatedSprite;
   private keys: Keys;
   private playerSpeed: number;
-  private playerWidth: number = 100;
-  private playerHeight: number = 100;
+  private playerWidth: number = 150;
+  private playerHeight: number = 150;
   private app: PIXI.Application;
   private facingRight: boolean = true;
   private moveSound: HTMLAudioElement;
 
   constructor(app: PIXI.Application) {
     this.app = app;
-    this.sprite = new PIXI.Sprite(PIXI.Texture.from("images/knight.png"));
-    this.sprite.width = this.playerWidth;
-    this.sprite.height = this.playerHeight;
-    this.sprite.anchor.set(0.5);
-    this.sprite.x = 60;
-    this.sprite.y = 550;
-    app.stage.addChild(this.sprite);
+    const frames = [];
+    for (let i = 1; i < 5; i++) {
+      frames.push(
+        PIXI.Texture.from(`images/knight/standing/knight_standing${i}.png`)
+      );
+    }
+    this.animatedSprite = new PIXI.AnimatedSprite(frames);
+    this.animatedSprite.width = this.playerWidth;
+    this.animatedSprite.height = this.playerHeight;
+    this.animatedSprite.anchor.set(0.5);
+    this.animatedSprite.x = 60;
+    this.animatedSprite.y = 530;
+    this.animatedSprite.animationSpeed = 0.2;
+    this.animatedSprite.play();
+
+    app.stage.addChild(this.animatedSprite);
 
     this.keys = {
       w: false,
@@ -28,9 +37,8 @@ export class Player {
       s: false,
       d: false,
     };
-
+    console.log(frames);
     this.playerSpeed = 5;
-
     this.moveSound = document.getElementById("moveSound") as HTMLAudioElement;
   }
 
@@ -48,39 +56,39 @@ export class Player {
 
   public update(): void {
     if (this.keys.w) {
-      if (this.sprite.y < this.app.screen.height - 550) {
+      if (this.animatedSprite.y < this.app.screen.height - 530) {
         return;
       }
-      this.sprite.y -= this.playerSpeed;
+      this.animatedSprite.y -= this.playerSpeed;
       this.playMoveSound();
     }
     if (this.keys.a) {
       if (this.facingRight) {
-        this.sprite.scale.x *= -1;
+        this.animatedSprite.scale.x *= -1;
         this.facingRight = false;
       }
-      if (this.sprite.x < 50) {
+      if (this.animatedSprite.x < 50) {
         return;
       }
-      this.sprite.x -= this.playerSpeed;
+      this.animatedSprite.x -= this.playerSpeed;
       this.playMoveSound();
     }
     if (this.keys.s) {
-      if (this.sprite.y > this.app.screen.height - 50) {
+      if (this.animatedSprite.y > this.app.screen.height - 80) {
         return;
       }
-      this.sprite.y += this.playerSpeed;
+      this.animatedSprite.y += this.playerSpeed;
       this.playMoveSound();
     }
     if (this.keys.d) {
       if (!this.facingRight) {
-        this.sprite.scale.x *= -1;
+        this.animatedSprite.scale.x *= -1;
         this.facingRight = true;
       }
-      if (this.sprite.x > this.app.screen.width - 55) {
+      if (this.animatedSprite.x > this.app.screen.width - 55) {
         return;
       }
-      this.sprite.x += this.playerSpeed;
+      this.animatedSprite.x += this.playerSpeed;
       this.playMoveSound();
     }
   }
