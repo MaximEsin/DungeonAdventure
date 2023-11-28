@@ -19,7 +19,7 @@ class Game {
 
     // Init player and enemy
     this.player = new Player(this.app);
-    this.enemy = new Enemy(this.app);
+    this.enemy = new Enemy(this.app, this.player);
     this.setupInput();
     this.setupGameLoop();
   }

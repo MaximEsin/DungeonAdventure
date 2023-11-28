@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { Player } from "./player";
 
 // Enemy class
 export class Enemy {
@@ -6,10 +7,12 @@ export class Enemy {
   private animatedSprite: PIXI.AnimatedSprite;
   private enemySpeed: number;
   private app: PIXI.Application;
+  private player: Player;
 
-  constructor(app: PIXI.Application) {
+  constructor(app: PIXI.Application, player: Player) {
     this.app = app;
     this.enemySpeed = 3;
+    this.player = player;
 
     // Load frames for enemy animation
     this.frames = [
@@ -42,5 +45,22 @@ export class Enemy {
     return Math.random() * max;
   }
 
-  public update(): void {}
+  public update(): void {
+    // Calculate direction to the player
+    const directionX = this.player.animatedSprite.x - this.animatedSprite.x;
+    const directionY = this.player.animatedSprite.y - this.animatedSprite.y;
+
+    // Calculate the total distance to the player
+    const distance = Math.sqrt(
+      directionX * directionX + directionY * directionY
+    );
+
+    // Normalize the direction to get a unit vector
+    const normalizedDirectionX = directionX / distance;
+    const normalizedDirectionY = directionY / distance;
+
+    // Move the enemy towards the player
+    this.animatedSprite.x += normalizedDirectionX * this.enemySpeed;
+    this.animatedSprite.y += normalizedDirectionY * this.enemySpeed;
+  }
 }

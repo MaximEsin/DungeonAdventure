@@ -7,7 +7,7 @@ export class Player {
   private movingFrames: PIXI.Texture[];
   private attackingFrames: PIXI.Texture[];
   private blockingFrames: PIXI.Texture[];
-  private animatedSprite: PIXI.AnimatedSprite;
+  public animatedSprite: PIXI.AnimatedSprite;
   private keys: Keys;
   private playerSpeed: number;
   private playerWidth: number = 150;
