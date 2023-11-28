@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import { Keys } from "../interfaces/keys";
+import { PlayerStats } from "../interfaces/playerStats";
 
 // Player class
 export class Player {
@@ -20,9 +21,18 @@ export class Player {
   private lastAttackTime: number = 0;
   private isBlocking: boolean = false;
   private isActing: boolean = false;
+  public stats: PlayerStats;
 
   constructor(app: PIXI.Application) {
     this.app = app;
+
+    this.stats = {
+      health: 100,
+      maxHealth: 100,
+      damage: 20,
+      armor: 10,
+    };
+
     this.keys = {
       w: false,
       a: false,
@@ -92,6 +102,22 @@ export class Player {
     this.animatedSprite.play();
 
     app.stage.addChild(this.animatedSprite);
+  }
+
+  public getStats(): PlayerStats {
+    return { ...this.stats }; // Return a copy to prevent direct modification
+  }
+
+  public takeDamage(amount: number): void {
+    // Apply damage to the player, considering armor
+    const damageTaken = Math.max(amount - this.stats.armor, 0);
+    this.stats.health -= damageTaken;
+
+    if (this.stats.health <= 0) {
+      // Player is defeated, handle accordingly (e.g., game over)
+      this.stats.health = 0;
+      console.log("Player defeated!");
+    }
   }
 
   public handleKeyDown(event: KeyboardEvent): void {

@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import { Player } from "./player";
+import { EnemyStats } from "../interfaces/enemyStats";
 
 // Enemy class
 export class Enemy {
@@ -9,11 +10,19 @@ export class Enemy {
   private app: PIXI.Application;
   private player: Player;
   private shouldMove: boolean = true;
+  public stats: EnemyStats;
 
   constructor(app: PIXI.Application, player: Player) {
     this.app = app;
     this.enemySpeed = 1;
     this.player = player;
+
+    this.stats = {
+      health: 40,
+      maxHealth: 40,
+      damage: 10,
+      armor: 10,
+    };
 
     // Load frames for enemy animation
     this.frames = [
@@ -40,6 +49,22 @@ export class Enemy {
     this.animatedSprite.play();
 
     app.stage.addChild(this.animatedSprite);
+  }
+
+  public getStats(): EnemyStats {
+    return { ...this.stats }; // Return a copy to prevent direct modification
+  }
+
+  public takeDamage(amount: number): void {
+    // Apply damage to the enemy, considering armor
+    const damageTaken = Math.max(amount - this.stats.armor, 0);
+    this.stats.health -= damageTaken;
+
+    if (this.stats.health <= 0) {
+      // Enemy is defeated, handle accordingly (e.g., increase player's score)
+      this.stats.health = 0;
+      console.log("Enemy defeated!");
+    }
   }
 
   private getRandomPosition(max: number): number {
