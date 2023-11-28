@@ -27,7 +27,7 @@ export class Game {
   }
 
   private createEnemy(): void {
-    const enemy = new Enemy(this.app, this.player);
+    const enemy = new Enemy(this.app, this.player, this);
     this.enemies.push(enemy);
   }
 

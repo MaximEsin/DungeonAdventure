@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { Player } from "./player";
 import { EnemyStats } from "../interfaces/enemyStats";
+import { Game } from "../game";
 
 // Enemy class
 export class Enemy {
@@ -11,11 +12,13 @@ export class Enemy {
   private player: Player;
   private shouldMove: boolean = true;
   public stats: EnemyStats;
+  private game: Game;
 
-  constructor(app: PIXI.Application, player: Player) {
+  constructor(app: PIXI.Application, player: Player, game: Game) {
     this.app = app;
     this.enemySpeed = 1;
     this.player = player;
+    this.game = game;
 
     this.stats = {
       health: 40,
@@ -63,7 +66,11 @@ export class Enemy {
     if (this.stats.health <= 0) {
       // Enemy is defeated, handle accordingly (e.g., increase player's score)
       this.stats.health = 0;
-      console.log("Enemy defeated!");
+      this.app.stage.removeChild(this.animatedSprite);
+      const index = this.game.enemies.indexOf(this);
+      if (index !== -1) {
+        this.game.enemies.splice(index, 1);
+      }
     }
   }
 
@@ -72,7 +79,6 @@ export class Enemy {
   }
 
   public update(): void {
-    console.log(this.stats.health);
     // Calculate direction to the player
     const directionX = this.player.animatedSprite.x - this.animatedSprite.x;
     const directionY = this.player.animatedSprite.y - this.animatedSprite.y;
