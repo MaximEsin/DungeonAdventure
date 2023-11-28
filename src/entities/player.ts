@@ -15,6 +15,8 @@ export class Player {
   private facingRight: boolean = true;
   private moveSound: HTMLAudioElement;
   private attackSound: HTMLAudioElement;
+  private isAttacking: boolean = false;
+  private lastAttackTime: number = 0;
 
   constructor(app: PIXI.Application) {
     this.app = app;
@@ -136,13 +138,37 @@ export class Player {
         this.animatedSprite.play();
       }
     } else if (this.keys.v) {
-      if (this.animatedSprite.textures !== this.attackingFrames) {
-        this.animatedSprite.stop();
-        this.animatedSprite.textures = this.attackingFrames;
-        this.animatedSprite.play();
+      if (!this.isAttacking) {
+        this.isAttacking = true;
+        this.lastAttackTime = performance.now(); // Record the time of the first attack
+
+        // Increase player size by 20%
+        const originalWidth = this.animatedSprite.width;
+        const originalHeight = this.animatedSprite.height;
+        this.animatedSprite.width = originalWidth * 1.4;
+        this.animatedSprite.height = originalHeight * 1.4;
+
+        if (this.animatedSprite.textures !== this.attackingFrames) {
+          this.animatedSprite.stop();
+          this.animatedSprite.textures = this.attackingFrames;
+          this.animatedSprite.play();
+          this.playAttackSound();
+        }
+      }
+      // Check if 2 seconds have passed since the last attack sound
+      const currentTime = performance.now();
+      if (currentTime - this.lastAttackTime >= 950) {
+        this.lastAttackTime = currentTime;
         this.playAttackSound();
       }
     } else {
+      if (this.isAttacking) {
+        this.isAttacking = false;
+      }
+      // Reset player size to original
+      this.animatedSprite.width = this.playerWidth;
+      this.animatedSprite.height = this.playerHeight;
+
       // If not moving, play standing animation
       if (this.animatedSprite.textures !== this.standingFrames) {
         this.animatedSprite.stop();
