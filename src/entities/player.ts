@@ -199,16 +199,16 @@ export class Player {
           this.animatedSprite.textures = this.attackingFrames;
           this.animatedSprite.play();
           this.playAttackSound();
-
-          // Call the attack method during the attack animation frames
-          this.app.ticker.addOnce(() => this.attack());
         }
       }
-      // Check if 2 seconds have passed since the last attack sound
+
       const currentTime = performance.now();
+
+      // Check if 2 seconds have passed since the last attack sound
       if (currentTime - this.lastAttackTime >= 950) {
         this.lastAttackTime = currentTime;
         this.playAttackSound();
+        this.attack();
       }
     } else if (this.keys.c) {
       this.isActing = true;
