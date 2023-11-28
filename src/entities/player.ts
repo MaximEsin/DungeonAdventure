@@ -6,6 +6,7 @@ export class Player {
   private standingFrames: PIXI.Texture[];
   private movingFrames: PIXI.Texture[];
   private attackingFrames: PIXI.Texture[];
+  private blockingFrames: PIXI.Texture[];
   private animatedSprite: PIXI.AnimatedSprite;
   private keys: Keys;
   private playerSpeed: number;
@@ -17,6 +18,8 @@ export class Player {
   private attackSound: HTMLAudioElement;
   private isAttacking: boolean = false;
   private lastAttackTime: number = 0;
+  private isBlocking: boolean = false;
+  private isActing: boolean = false;
 
   constructor(app: PIXI.Application) {
     this.app = app;
@@ -26,6 +29,7 @@ export class Player {
       s: false,
       d: false,
       v: false,
+      c: false,
     };
     this.playerSpeed = 5;
     this.moveSound = document.getElementById("moveSound") as HTMLAudioElement;
@@ -67,6 +71,17 @@ export class Player {
       PIXI.Texture.from("images/knight/attack/attack10.png"),
     ];
 
+    // Load frames for blocking animation
+    this.blockingFrames = [
+      PIXI.Texture.from("images/knight/blocking/blocking1.png"),
+      PIXI.Texture.from("images/knight/blocking/blocking2.png"),
+      PIXI.Texture.from("images/knight/blocking/blocking3.png"),
+      PIXI.Texture.from("images/knight/blocking/blocking4.png"),
+      PIXI.Texture.from("images/knight/blocking/blocking5.png"),
+      PIXI.Texture.from("images/knight/blocking/blocking6.png"),
+      PIXI.Texture.from("images/knight/blocking/blocking7.png"),
+    ];
+
     this.animatedSprite = new PIXI.AnimatedSprite(this.standingFrames);
     this.animatedSprite.width = this.playerWidth;
     this.animatedSprite.height = this.playerHeight;
@@ -80,7 +95,7 @@ export class Player {
   }
 
   public handleKeyDown(event: KeyboardEvent): void {
-    if (event.key in this.keys) {
+    if (event.key in this.keys && !this.isActing) {
       this.keys[event.key] = true;
     }
   }
@@ -138,6 +153,7 @@ export class Player {
         this.animatedSprite.play();
       }
     } else if (this.keys.v) {
+      this.isActing = true;
       if (!this.isAttacking) {
         this.isAttacking = true;
         this.lastAttackTime = performance.now(); // Record the time of the first attack
@@ -161,9 +177,23 @@ export class Player {
         this.lastAttackTime = currentTime;
         this.playAttackSound();
       }
+    } else if (this.keys.c) {
+      this.isActing = true;
+      if (!this.isBlocking) {
+        this.isBlocking = true;
+      }
+      if (this.animatedSprite.textures !== this.blockingFrames) {
+        this.animatedSprite.stop();
+        this.animatedSprite.textures = this.blockingFrames;
+        this.animatedSprite.play();
+      }
     } else {
+      this.isActing = false;
       if (this.isAttacking) {
         this.isAttacking = false;
+      }
+      if (this.isBlocking) {
+        this.isBlocking = false;
       }
       // Reset player size to original
       this.animatedSprite.width = this.playerWidth;
