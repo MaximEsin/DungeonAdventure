@@ -1,10 +1,12 @@
 import * as PIXI from "pixi.js";
 import { Player } from "./entities/player";
+import { Enemy } from "./entities/enemy";
 
 // Game class
 class Game {
   private app: PIXI.Application;
   private player: Player;
+  private enemy: Enemy;
 
   constructor() {
     // Create PIXI application
@@ -15,8 +17,9 @@ class Game {
     });
     document.body.appendChild(this.app.view as unknown as Node);
 
-    // Init player
+    // Init player and enemy
     this.player = new Player(this.app);
+    this.enemy = new Enemy(this.app);
     this.setupInput();
     this.setupGameLoop();
   }
@@ -38,6 +41,7 @@ class Game {
   private setupGameLoop(): void {
     this.app.ticker.add(() => {
       this.player.update();
+      this.enemy.update();
     });
   }
 }
