@@ -8,10 +8,11 @@ export class Enemy {
   private enemySpeed: number;
   private app: PIXI.Application;
   private player: Player;
+  private shouldMove: boolean = true;
 
   constructor(app: PIXI.Application, player: Player) {
     this.app = app;
-    this.enemySpeed = 3;
+    this.enemySpeed = 1;
     this.player = player;
 
     // Load frames for enemy animation
@@ -59,8 +60,36 @@ export class Enemy {
     const normalizedDirectionX = directionX / distance;
     const normalizedDirectionY = directionY / distance;
 
-    // Move the enemy towards the player
-    this.animatedSprite.x += normalizedDirectionX * this.enemySpeed;
-    this.animatedSprite.y += normalizedDirectionY * this.enemySpeed;
+    // Check if the enemy is close to the player
+    const proximityThreshold = 50;
+
+    // Check if the enemy is close to the player
+    if (distance < proximityThreshold) {
+      // Calculate the stopping position without overlapping with the player
+      const stopX =
+        this.player.animatedSprite.x -
+        normalizedDirectionX * proximityThreshold;
+      const stopY =
+        this.player.animatedSprite.y -
+        normalizedDirectionY * proximityThreshold;
+
+      // Set the enemy's position to the calculated stopping position
+      this.animatedSprite.x = stopX;
+      this.animatedSprite.y = stopY;
+
+      this.shouldMove = false; // Stop moving when reaching the player
+    } else if (!this.shouldMove) {
+      // If the player moved, resume following
+      this.shouldMove = true;
+    }
+
+    if (this.shouldMove) {
+      // Move the enemy towards the player
+      this.animatedSprite.x += normalizedDirectionX * this.enemySpeed;
+      this.animatedSprite.y += normalizedDirectionY * this.enemySpeed;
+    }
+  }
+  public resumeMovement(): void {
+    this.shouldMove = true;
   }
 }
