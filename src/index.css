@@ -2,6 +2,33 @@
   width: 95vw;
   height: 95vh;
   display: flex;
+  flex-direction: row-reverse;
   align-items: center;
   justify-content: center;
+  gap: 20px;
+  background-color: coral;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+}
+
+.interface {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: brown;
+  border-radius: 5px;
+  padding: 20px;
+  color: white;
+  gap: 20px;
+}
+
+.text {
+  font-size: 20px;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
