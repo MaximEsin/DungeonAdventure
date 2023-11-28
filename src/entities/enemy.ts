@@ -5,7 +5,7 @@ import { EnemyStats } from "../interfaces/enemyStats";
 // Enemy class
 export class Enemy {
   private frames: PIXI.Texture[];
-  private animatedSprite: PIXI.AnimatedSprite;
+  public animatedSprite: PIXI.AnimatedSprite;
   private enemySpeed: number;
   private app: PIXI.Application;
   private player: Player;
@@ -72,6 +72,7 @@ export class Enemy {
   }
 
   public update(): void {
+    console.log(this.stats.health);
     // Calculate direction to the player
     const directionX = this.player.animatedSprite.x - this.animatedSprite.x;
     const directionY = this.player.animatedSprite.y - this.animatedSprite.y;

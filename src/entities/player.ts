@@ -1,6 +1,8 @@
 import * as PIXI from "pixi.js";
 import { Keys } from "../interfaces/keys";
 import { PlayerStats } from "../interfaces/playerStats";
+import { Enemy } from "./enemy";
+import { Game } from "../game";
 
 // Player class
 export class Player {
@@ -22,9 +24,11 @@ export class Player {
   private isBlocking: boolean = false;
   private isActing: boolean = false;
   public stats: PlayerStats;
+  private game: Game;
 
-  constructor(app: PIXI.Application) {
+  constructor(app: PIXI.Application, game: Game) {
     this.app = app;
+    this.game = game;
 
     this.stats = {
       health: 100,
@@ -195,6 +199,9 @@ export class Player {
           this.animatedSprite.textures = this.attackingFrames;
           this.animatedSprite.play();
           this.playAttackSound();
+
+          // Call the attack method during the attack animation frames
+          this.app.ticker.addOnce(() => this.attack());
         }
       }
       // Check if 2 seconds have passed since the last attack sound
@@ -230,6 +237,32 @@ export class Player {
         this.animatedSprite.stop();
         this.animatedSprite.textures = this.standingFrames;
         this.animatedSprite.play();
+      }
+    }
+  }
+
+  public attack(): void {
+    const attackRange = 100; // Adjust the attack range as needed
+
+    // Calculate the attack direction based on the player's facing direction
+    const attackDirection = this.facingRight ? 1 : -1;
+
+    // Define the attack hitbox
+    const attackHitbox = new PIXI.Rectangle(
+      this.animatedSprite.x + (attackDirection > 0 ? 0 : -attackRange),
+      this.animatedSprite.y - attackRange / 2,
+      attackRange,
+      attackRange
+    );
+
+    // Loop through all enemies and check if they are in the attack hitbox
+    for (const enemy of this.game.enemies) {
+      if (enemy instanceof Enemy) {
+        const enemyBounds = enemy.animatedSprite.getBounds();
+        if (attackHitbox.intersects(enemyBounds)) {
+          // Enemy is within the attack hitbox, apply damage
+          enemy.takeDamage(this.stats.damage);
+        }
       }
     }
   }

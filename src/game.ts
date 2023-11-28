@@ -4,10 +4,11 @@ import { Enemy } from "./entities/enemy";
 import { PlayerStats } from "./interfaces/playerStats";
 
 // Game class
-class Game {
+export class Game {
   public app: PIXI.Application;
   public player: Player;
-  private enemy: Enemy;
+  private enemy!: Enemy;
+  public enemies: Enemy[] = [];
 
   constructor() {
     // Create PIXI application
@@ -19,10 +20,15 @@ class Game {
     document.body.appendChild(this.app.view as unknown as Node);
 
     // Init player and enemy
-    this.player = new Player(this.app);
-    this.enemy = new Enemy(this.app, this.player);
+    this.player = new Player(this.app, this);
+    this.createEnemy();
     this.setupInput();
     this.setupGameLoop();
+  }
+
+  private createEnemy(): void {
+    const enemy = new Enemy(this.app, this.player);
+    this.enemies.push(enemy);
   }
 
   // Add event listeners
@@ -42,7 +48,9 @@ class Game {
   private setupGameLoop(): void {
     this.app.ticker.add(() => {
       this.player.update();
-      this.enemy.update();
+      for (const enemy of this.enemies) {
+        enemy.update();
+      }
     });
   }
 }
