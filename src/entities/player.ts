@@ -34,7 +34,7 @@ export class Player {
       health: 100,
       maxHealth: 100,
       damage: 20,
-      armor: 10,
+      armor: 30,
     };
 
     this.keys = {
@@ -112,15 +112,22 @@ export class Player {
     return { ...this.stats }; // Return a copy to prevent direct modification
   }
 
-  public takeDamage(amount: number): void {
-    // Apply damage to the player, considering armor
-    const damageTaken = Math.max(amount - this.stats.armor, 0);
-    this.stats.health -= damageTaken;
+  public takeDamage(amount: number, attackRange: number): void {
+    // Check if the player is within the attack range
+    const playerBounds = this.animatedSprite.getBounds();
+    if (
+      attackRange >= playerBounds.width &&
+      attackRange >= playerBounds.height
+    ) {
+      // Apply damage to the player, considering armor
+      const damageTaken = Math.max(amount - this.stats.armor, 0);
+      this.stats.health -= damageTaken;
 
-    if (this.stats.health <= 0) {
-      // Player is defeated, handle accordingly (e.g., game over)
-      this.stats.health = 0;
-      console.log("Player defeated!");
+      if (this.stats.health <= 0) {
+        // Player is defeated, handle accordingly (e.g., game over)
+        this.stats.health = 0;
+        console.log("Player defeated!");
+      }
     }
   }
 
@@ -137,6 +144,7 @@ export class Player {
   }
 
   public update(): void {
+    console.log(this.stats.health);
     if (this.keys.w) {
       if (this.animatedSprite.y < this.app.screen.height - 530) {
         return;

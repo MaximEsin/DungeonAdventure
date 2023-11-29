@@ -13,28 +13,46 @@ export class Enemy {
   private shouldMove: boolean = true;
   public stats: EnemyStats;
   private game: Game;
+  private isAttacking: boolean = false;
+  private attackInterval: number = 1000;
+  private lastAttackTime: number = 0;
+  private attackingFrames: PIXI.Texture[];
+  private facingRight: boolean = true;
 
   constructor(app: PIXI.Application, player: Player, game: Game) {
     this.app = app;
-    this.enemySpeed = 1;
+    this.enemySpeed = 2;
     this.player = player;
     this.game = game;
 
     this.stats = {
       health: 40,
       maxHealth: 40,
-      damage: 10,
+      damage: 40,
       armor: 10,
     };
 
     // Load frames for enemy animation
     this.frames = [
-      PIXI.Texture.from("images/knight/standing/knight_standing1.png"),
+      PIXI.Texture.from("images/berserk/move/run1.png"),
+      PIXI.Texture.from("images/berserk/move/run2.png"),
+      PIXI.Texture.from("images/berserk/move/run3.png"),
+      PIXI.Texture.from("images/berserk/move/run4.png"),
+      PIXI.Texture.from("images/berserk/move/run5.png"),
+      PIXI.Texture.from("images/berserk/move/run6.png"),
+    ];
+
+    // Load frames for attacking animation
+    this.attackingFrames = [
+      PIXI.Texture.from("images/berserk/attack/attack1.png"),
+      PIXI.Texture.from("images/berserk/attack/attack2.png"),
+      PIXI.Texture.from("images/berserk/attack/attack3.png"),
+      PIXI.Texture.from("images/berserk/attack/attack4.png"),
     ];
 
     this.animatedSprite = new PIXI.AnimatedSprite(this.frames);
-    this.animatedSprite.width = 100; // Adjust width as needed
-    this.animatedSprite.height = 100; // Adjust height as needed
+    this.animatedSprite.width = 150; // Adjust width as needed
+    this.animatedSprite.height = 150; // Adjust height as needed
     this.animatedSprite.anchor.set(0.5);
 
     // Set the initial position near the top border or right border
@@ -93,7 +111,7 @@ export class Enemy {
     const normalizedDirectionY = directionY / distance;
 
     // Check if the enemy is close to the player
-    const proximityThreshold = 50;
+    const proximityThreshold = 60;
 
     // Check if the enemy is close to the player
     if (distance < proximityThreshold) {
@@ -110,17 +128,93 @@ export class Enemy {
       this.animatedSprite.y = stopY;
 
       this.shouldMove = false; // Stop moving when reaching the player
+
+      // Check if it's time to attack
+      const currentTime = performance.now();
+      if (
+        !this.isAttacking &&
+        currentTime - this.lastAttackTime >= this.attackInterval
+      ) {
+        this.isAttacking = true;
+        this.lastAttackTime = currentTime;
+
+        // Call the function to perform the attack
+        this.attackPlayer();
+      }
     } else if (!this.shouldMove) {
       // If the player moved, resume following
       this.shouldMove = true;
+      this.isAttacking = false; // Stop attacking when resuming movement
+
+      // If enemy was attacking, return to moving animation
+      if (this.animatedSprite.textures === this.attackingFrames) {
+        this.playMovingAnimation();
+      }
     }
 
     if (this.shouldMove) {
       // Move the enemy towards the player
       this.animatedSprite.x += normalizedDirectionX * this.enemySpeed;
       this.animatedSprite.y += normalizedDirectionY * this.enemySpeed;
+
+      // Mirror the enemy when moving left
+      if (normalizedDirectionX < 0 && this.facingRight) {
+        this.mirrorEnemy();
+      } else if (normalizedDirectionX > 0 && !this.facingRight) {
+        // Restore the original orientation when moving right
+        this.restoreOrientation();
+      }
+    }
+
+    // Check if it's time for another attack during the attack animation
+    if (this.isAttacking) {
+      const currentTime = performance.now();
+      if (currentTime - this.lastAttackTime >= this.attackInterval) {
+        this.lastAttackTime = currentTime;
+
+        // Call the function to perform the attack
+        this.attackPlayer();
+      }
     }
   }
+
+  private mirrorEnemy(): void {
+    this.animatedSprite.scale.x *= -1;
+    this.facingRight = false;
+  }
+
+  private restoreOrientation(): void {
+    this.animatedSprite.scale.x *= -1;
+    this.facingRight = true;
+  }
+
+  private attackPlayer(): void {
+    // Play the attacking animation
+    this.playAttackAnimation();
+
+    const attackRange = 150;
+
+    // Call the function to handle the attack on the player
+    this.player.takeDamage(this.stats.damage, attackRange);
+  }
+
+  private playAttackAnimation(): void {
+    // Stop the current animation and play the attacking animation
+    this.animatedSprite.stop();
+    this.animatedSprite.textures = this.attackingFrames;
+    this.animatedSprite.loop = true;
+    this.animatedSprite.animationSpeed = 0.1;
+    this.animatedSprite.play();
+  }
+
+  private playMovingAnimation(): void {
+    // Stop the current animation and play the moving animation
+    this.animatedSprite.stop();
+    this.animatedSprite.textures = this.frames; // Assuming you have frames for moving animation
+    this.animatedSprite.loop = true; // Set to true if you want to loop the moving animation
+    this.animatedSprite.play();
+  }
+
   public resumeMovement(): void {
     this.shouldMove = true;
   }
