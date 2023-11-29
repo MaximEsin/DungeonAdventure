@@ -7,6 +7,7 @@ import { Game } from "../game";
 export class Enemy {
   private frames: PIXI.Texture[];
   public animatedSprite: PIXI.AnimatedSprite;
+  private deathFrames: PIXI.Texture[];
   private enemySpeed: number;
   private app: PIXI.Application;
   private player: Player;
@@ -50,6 +51,14 @@ export class Enemy {
       PIXI.Texture.from("images/berserk/attack/attack4.png"),
     ];
 
+    // Load frames for death animation
+    this.deathFrames = [
+      PIXI.Texture.from("images/berserk/dead/dead1.png"),
+      PIXI.Texture.from("images/berserk/dead/dead2.png"),
+      PIXI.Texture.from("images/berserk/dead/dead3.png"),
+      PIXI.Texture.from("images/berserk/dead/dead4.png"),
+    ];
+
     this.animatedSprite = new PIXI.AnimatedSprite(this.frames);
     this.animatedSprite.width = 150; // Adjust width as needed
     this.animatedSprite.height = 150; // Adjust height as needed
@@ -83,13 +92,25 @@ export class Enemy {
 
     if (this.stats.health <= 0) {
       // Enemy is defeated, handle accordingly (e.g., increase player's score)
+      this.playDeathAnimation();
       this.stats.health = 0;
-      this.app.stage.removeChild(this.animatedSprite);
-      const index = this.game.enemies.indexOf(this);
-      if (index !== -1) {
-        this.game.enemies.splice(index, 1);
-      }
     }
+  }
+
+  private playDeathAnimation(): void {
+    // Stop any ongoing animations
+    this.animatedSprite.stop();
+
+    // Set death animation frames
+    this.animatedSprite.textures = this.deathFrames; // Assuming you have frames for death animation
+
+    // Set animation speed and play the death animation
+    this.animatedSprite.animationSpeed = 0.2;
+    this.animatedSprite.loop = false;
+    this.animatedSprite.play();
+
+    // Disable enemy movement
+    this.shouldMove = false;
   }
 
   private getRandomPosition(max: number): number {
@@ -97,6 +118,10 @@ export class Enemy {
   }
 
   public update(): void {
+    if (this.stats.health <= 0) {
+      // If the enemy is already dead, do nothing
+      return;
+    }
     // Calculate direction to the player
     const directionX = this.player.animatedSprite.x - this.animatedSprite.x;
     const directionY = this.player.animatedSprite.y - this.animatedSprite.y;

@@ -10,6 +10,7 @@ export class Player {
   private movingFrames: PIXI.Texture[];
   private attackingFrames: PIXI.Texture[];
   private blockingFrames: PIXI.Texture[];
+  private deathFrames: PIXI.Texture[];
   public animatedSprite: PIXI.AnimatedSprite;
   private keys: Keys;
   private playerSpeed: number;
@@ -96,6 +97,19 @@ export class Player {
       PIXI.Texture.from("images/knight/blocking/blocking7.png"),
     ];
 
+    // Load frames for death animation
+    this.deathFrames = [
+      PIXI.Texture.from("images/knight/dying/dying1.png"),
+      PIXI.Texture.from("images/knight/dying/dying2.png"),
+      PIXI.Texture.from("images/knight/dying/dying3.png"),
+      PIXI.Texture.from("images/knight/dying/dying4.png"),
+      PIXI.Texture.from("images/knight/dying/dying5.png"),
+      PIXI.Texture.from("images/knight/dying/dying6.png"),
+      PIXI.Texture.from("images/knight/dying/dying7.png"),
+      PIXI.Texture.from("images/knight/dying/dying8.png"),
+      PIXI.Texture.from("images/knight/dying/dying9.png"),
+    ];
+
     this.animatedSprite = new PIXI.AnimatedSprite(this.standingFrames);
     this.animatedSprite.width = this.playerWidth;
     this.animatedSprite.height = this.playerHeight;
@@ -126,7 +140,6 @@ export class Player {
       if (this.stats.health <= 0) {
         // Player is defeated, handle accordingly (e.g., game over)
         this.stats.health = 0;
-        console.log("Player defeated!");
       }
     }
   }
@@ -144,7 +157,11 @@ export class Player {
   }
 
   public update(): void {
-    console.log(this.stats.health);
+    if (this.stats.health <= 0) {
+      // Player is dead, play death animation
+      this.playDeathAnimation();
+      return; // Skip the rest of the update logic
+    }
     if (this.keys.w) {
       if (this.animatedSprite.y < this.app.screen.height - 530) {
         return;
@@ -273,6 +290,29 @@ export class Player {
         }
       }
     }
+  }
+
+  private playDeathAnimation(): void {
+    // Stop any ongoing animations
+    this.animatedSprite.stop();
+
+    // Set death animation frames
+    this.animatedSprite.textures = this.deathFrames;
+
+    // Set animation speed and play the death animation
+    this.animatedSprite.animationSpeed = 0.2;
+    this.animatedSprite.loop = false;
+    this.animatedSprite.play();
+
+    // Disable player input
+    this.keys = {
+      w: false,
+      a: false,
+      s: false,
+      d: false,
+      v: false,
+      c: false,
+    };
   }
 
   private playMoveSound(): void {
