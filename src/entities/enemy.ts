@@ -217,10 +217,28 @@ export class Enemy {
     // Play the attacking animation
     this.playAttackAnimation();
 
+    // Play the attack sound for the enemy
+    this.playAttackSound();
+
     const attackRange = 150;
 
     // Call the function to handle the attack on the player
     this.player.takeDamage(this.stats.damage, attackRange);
+  }
+
+  private playAttackSound(): void {
+    // Assuming you have an attack sound for the enemy
+    const enemyAttackSound = document.getElementById(
+      "enemyAttackSound"
+    ) as HTMLAudioElement;
+
+    // Check if the audio is paused or not
+    if (enemyAttackSound.paused) {
+      // Reset the currentTime to start the sound from the beginning
+      enemyAttackSound.currentTime = 0;
+      // Play the sound
+      enemyAttackSound.play();
+    }
   }
 
   private playAttackAnimation(): void {
