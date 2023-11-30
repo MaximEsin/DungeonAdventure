@@ -118,8 +118,8 @@ export class Enemy {
   }
 
   public update(): void {
-    if (this.stats.health <= 0) {
-      // If the enemy is already dead, do nothing
+    if (this.stats.health <= 0 || this.player.stats.health <= 0) {
+      // If the enemy or the player is already dead, do nothing
       return;
     }
     // Calculate direction to the player
