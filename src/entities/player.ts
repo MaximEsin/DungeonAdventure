@@ -138,7 +138,7 @@ export class Player {
       this.stats.health -= damageTaken;
 
       if (this.stats.health <= 0) {
-        // Player is defeated, handle accordingly (e.g., game over)
+        this.playDeathAnimation();
         this.stats.health = 0;
       }
     }
@@ -158,8 +158,6 @@ export class Player {
 
   public update(): void {
     if (this.stats.health <= 0) {
-      // Player is dead, play death animation
-      this.playDeathAnimation();
       return; // Skip the rest of the update logic
     }
     if (this.keys.w) {
