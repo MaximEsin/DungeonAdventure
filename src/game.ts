@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { Player } from "./entities/player";
 import { Enemy } from "./entities/enemy";
-import { PlayerStats } from "./interfaces/playerStats";
+import { InterfaceManager } from "./UI/interfaceManager";
 
 // Game class
 export class Game {
@@ -9,6 +9,7 @@ export class Game {
   public player: Player;
   private enemy!: Enemy;
   public enemies: Enemy[] = [];
+  private interfaceManager: InterfaceManager;
 
   constructor() {
     // Create PIXI application
@@ -24,6 +25,9 @@ export class Game {
     this.createEnemy();
     this.setupInput();
     this.setupGameLoop();
+
+    // Initialize the interface manager
+    this.interfaceManager = new InterfaceManager();
   }
 
   private createEnemy(): void {
@@ -51,31 +55,10 @@ export class Game {
       for (const enemy of this.enemies) {
         enemy.update();
       }
+
+      // Update the interface on each frame
+      this.interfaceManager.updateInterface(this.player.getStats());
     });
   }
 }
 const game = new Game();
-
-// Get the interface elements
-const playerNameElement = document.getElementById(
-  "name"
-) as HTMLParagraphElement;
-const healthElement = document.getElementById("health") as HTMLParagraphElement;
-const damageElement = document.getElementById("damage") as HTMLParagraphElement;
-const armorElement = document.getElementById("armor") as HTMLParagraphElement;
-
-// Function to update the interface with player's stats
-function updateInterface(playerStats: PlayerStats): void {
-  playerNameElement.textContent = `Max`;
-  healthElement.textContent = `Health: ${playerStats.health}`;
-  damageElement.textContent = `Damage: ${playerStats.damage}`;
-  armorElement.textContent = `Armor: ${playerStats.armor}`;
-}
-
-// Call the function initially to display the initial stats
-updateInterface(game.player.getStats());
-
-// Add a listener to the ticker to update the interface on each frame
-game.app.ticker.add(() => {
-  updateInterface(game.player.getStats());
-});
