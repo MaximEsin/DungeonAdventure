@@ -129,6 +129,13 @@ export class Player {
   public takeDamage(amount: number, attackRange: number): void {
     // Check if the player is within the attack range
     const playerBounds = this.animatedSprite.getBounds();
+
+    // Check if the player is blocking
+    if (this.isBlocking) {
+      // Reduce damage when blocking
+      amount = 0;
+    }
+
     if (
       attackRange >= playerBounds.width &&
       attackRange >= playerBounds.height
@@ -242,6 +249,7 @@ export class Player {
         this.animatedSprite.stop();
         this.animatedSprite.textures = this.blockingFrames;
         this.animatedSprite.play();
+        this.animatedSprite.gotoAndStop(this.blockingFrames.length - 1);
       }
     } else {
       this.isActing = false;
