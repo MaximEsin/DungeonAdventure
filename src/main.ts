@@ -4,16 +4,42 @@ document.addEventListener("DOMContentLoaded", () => {
   // Get references to the start screen and start button
   const startScreen = document.getElementById("startScreen");
   const startButton = document.getElementById("startButton");
+  const deathScreen = document.getElementById("deathScreen");
+  const tryAgainButton = document.getElementById("tryAgainBtn");
+
+  let game: Game | null = null;
+  let tryAgainButtonClicked = false;
 
   // Function to hide the start screen and start the game
   function startGame() {
     startScreen?.classList.add("hidden");
-    startScreen?.classList.remove("startingScreenOverlay");
+    startScreen?.classList.remove("screen");
+    deathScreen?.classList.add("hidden");
+    deathScreen?.classList.remove("screen");
 
-    // Initialize the game
-    const game = new Game();
+    if (!game) {
+      game = new Game();
+    } else if (game && tryAgainButtonClicked) {
+      game.resetGame();
+    }
   }
 
-  // Add a click event listener to the start button
+  // Function to show the death screen
+  function showDeathScreen() {
+    deathScreen?.classList.add("screen");
+    deathScreen?.classList.remove("hidden");
+  }
+
+  // Function to reset the game and show the start screen
+  function tryAgain() {
+    deathScreen?.classList.add("hidden");
+    deathScreen?.classList.remove("screen");
+    tryAgainButtonClicked = true;
+    startScreen?.classList.add("screen");
+    startScreen?.classList.remove("hidden");
+  }
+
+  // Add click event listeners
   startButton?.addEventListener("click", startGame);
+  tryAgainButton?.addEventListener("click", tryAgain);
 });

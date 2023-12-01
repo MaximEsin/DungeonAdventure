@@ -60,4 +60,13 @@ export class Game {
       this.interfaceManager.updateInterface(this.player.getStats());
     });
   }
+
+  public resetGame(): void {
+    // Reset player and enemy positions, stats, and any other relevant game state
+    this.player.reset();
+    this.enemies.forEach((enemy) => enemy.reset());
+
+    // Show the initial interface
+    this.interfaceManager.updateInterface(this.player.getStats());
+  }
 }

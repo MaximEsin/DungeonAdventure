@@ -8,10 +8,14 @@
     <title>Dungeon Adventures</title>
   </head>
   <body class="body">
-    <div id="startScreen" class="startingScreen">
+    <div id="startScreen" class="screen">
       <p class="heading">Welcome to the Dungeon Adventure</p>
       <button class="btn" id="startButton">Start</button>
       <button class="btn">Choose your class</button>
+    </div>
+    <div id="deathScreen" class="hidden">
+      <p class="heading">You died</p>
+      <button class="btn" id="tryAgainBtn">Try again</button>
     </div>
     <div class="interface">
       <p class="text" id="name"></p>

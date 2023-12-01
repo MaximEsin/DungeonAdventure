@@ -147,7 +147,20 @@ export class Player {
       if (this.stats.health <= 0) {
         this.playDeathAnimation();
         this.stats.health = 0;
+
+        // Show the death screen after 5 seconds
+        setTimeout(() => {
+          this.showDeathScreen();
+        }, 2000);
       }
+    }
+  }
+
+  private showDeathScreen(): void {
+    const deathScreen = document.getElementById("deathScreen");
+    if (deathScreen) {
+      deathScreen.classList.add("screen");
+      deathScreen.classList.remove("hidden");
     }
   }
 
@@ -339,5 +352,29 @@ export class Player {
       // Play the sound
       this.attackSound.play();
     }
+  }
+
+  public reset(): void {
+    // Reset player stats to initial values
+    this.stats = {
+      health: 100,
+      maxHealth: 100,
+      damage: 20,
+      armor: 30,
+    };
+
+    // Reset player position
+    this.animatedSprite.x = 60;
+    this.animatedSprite.y = 530;
+
+    // Reset any other player-specific state
+    this.isAttacking = false;
+    this.isBlocking = false;
+    this.isActing = false;
+
+    // Play the standing animation
+    this.animatedSprite.stop();
+    this.animatedSprite.textures = this.standingFrames;
+    this.animatedSprite.play();
   }
 }

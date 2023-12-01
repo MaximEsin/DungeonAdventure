@@ -261,4 +261,32 @@ export class Enemy {
   public resumeMovement(): void {
     this.shouldMove = true;
   }
+
+  public reset(): void {
+    // Reset enemy stats to initial values
+    this.stats = {
+      health: 40,
+      maxHealth: 40,
+      damage: 40,
+      armor: 10,
+    };
+
+    // Reset enemy position to a random position
+    this.animatedSprite.x =
+      Math.random() < 0.5
+        ? this.getRandomPosition(this.app.screen.width)
+        : this.app.screen.width - 50;
+    this.animatedSprite.y =
+      Math.random() < 0.5 ? 50 : this.getRandomPosition(this.app.screen.height);
+
+    // Reset other enemy-specific state
+    this.shouldMove = true;
+    this.isAttacking = false;
+    this.lastAttackTime = 0;
+
+    // Play the moving animation
+    this.animatedSprite.stop();
+    this.animatedSprite.textures = this.frames;
+    this.animatedSprite.play();
+  }
 }
