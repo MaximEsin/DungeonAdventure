@@ -38,6 +38,10 @@
 .screen {
   width: 100vw;
   height: 100vh;
+  background-image: url("../../public/images/backgrounds/Main.gif");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
   background-color: black;
   display: flex;
   align-items: center;
