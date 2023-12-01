@@ -178,9 +178,14 @@ export class Enemy {
     }
 
     if (this.shouldMove) {
-      // Move the enemy towards the player
-      this.animatedSprite.x += normalizedDirectionX * this.enemySpeed;
-      this.animatedSprite.y += normalizedDirectionY * this.enemySpeed;
+      // Move the enemy towards the player while avoiding overlap
+      const overlapThreshold = 30; // Adjust as needed
+
+      if (distance > overlapThreshold) {
+        // Only move if not too close to the player to avoid overlap
+        this.animatedSprite.x += normalizedDirectionX * this.enemySpeed;
+        this.animatedSprite.y += normalizedDirectionY * this.enemySpeed;
+      }
 
       // Mirror the enemy when moving left
       if (normalizedDirectionX < 0 && this.facingRight) {
