@@ -16,8 +16,19 @@ export class Game {
     this.app = new PIXI.Application({
       width: 1200,
       height: 600,
-      backgroundColor: 0x000000,
-    });
+      transparent: true,
+    } as any);
+
+    // Load the background image
+    const backgroundImage = PIXI.Sprite.from(
+      "images/backgrounds/BackWildWest.png"
+    ); // Replace with the path to your image
+    backgroundImage.width = this.app.screen.width;
+    backgroundImage.height = this.app.screen.height;
+
+    // Add the background image to the stage
+    this.app.stage.addChild(backgroundImage);
+
     document.body.appendChild(this.app.view as unknown as Node);
 
     // Init player and enemy

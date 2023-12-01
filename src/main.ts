@@ -24,12 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Function to show the death screen
-  function showDeathScreen() {
-    deathScreen?.classList.add("screen");
-    deathScreen?.classList.remove("hidden");
-  }
-
   // Function to reset the game and show the start screen
   function tryAgain() {
     deathScreen?.classList.add("hidden");
