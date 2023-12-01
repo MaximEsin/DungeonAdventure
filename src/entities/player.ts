@@ -286,6 +286,16 @@ export class Player {
   }
 
   public attack(): void {
+    // Check if the enemy is alive
+    const aliveEnemies = this.game.enemies.filter(
+      (enemy) => enemy.stats.health > 0
+    );
+
+    if (aliveEnemies.length === 0) {
+      // No alive enemies, exit the attack function
+      return;
+    }
+
     const attackRange = 100; // Adjust the attack range as needed
 
     // Calculate the attack direction based on the player's facing direction
