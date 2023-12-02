@@ -14,11 +14,12 @@ export class Enemy {
   private shouldMove: boolean = true;
   public stats: EnemyStats;
   private game: Game;
-  private isAttacking: boolean = false;
+  public isAttacking: boolean = false;
   private attackInterval: number = 1000;
   private lastAttackTime: number = 0;
   private attackingFrames: PIXI.Texture[];
   private facingRight: boolean = true;
+  public isAttackingWilePlayerIsAttacking: boolean = false;
 
   constructor(app: PIXI.Application, player: Player, game: Game) {
     this.app = app;
@@ -169,7 +170,8 @@ export class Enemy {
     } else if (!this.shouldMove) {
       // If the player moved, resume following
       this.shouldMove = true;
-      this.isAttacking = false; // Stop attacking when resuming movement
+      this.isAttacking = false; // Stop attacking when resuming movement;
+      this.isAttackingWilePlayerIsAttacking = false;
 
       // If enemy was attacking, return to moving animation
       if (this.animatedSprite.textures === this.attackingFrames) {
@@ -221,6 +223,8 @@ export class Enemy {
   private attackPlayer(): void {
     // Play the attacking animation
     this.playAttackAnimation();
+    this.isAttacking = true;
+    this.isAttackingWilePlayerIsAttacking = true;
 
     // Play the attack sound for the enemy
     this.playAttackSound();

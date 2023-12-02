@@ -7,7 +7,7 @@ import { InterfaceManager } from "./UI/interfaceManager";
 export class Game {
   public app: PIXI.Application;
   public player: Player;
-  private enemy!: Enemy;
+  public enemy!: Enemy;
   public enemies: Enemy[] = [];
   private interfaceManager: InterfaceManager;
 

@@ -129,7 +129,6 @@ export class Player {
   public takeDamage(amount: number, attackRange: number): void {
     // Check if the player is within the attack range
     const playerBounds = this.animatedSprite.getBounds();
-
     // Check if the player is blocking
     if (this.isBlocking) {
       // Reduce damage when blocking
@@ -296,7 +295,7 @@ export class Player {
       return;
     }
 
-    const attackRange = 100; // Adjust the attack range as needed
+    const attackRange = 150; // Adjust the attack range as needed
 
     // Calculate the attack direction based on the player's facing direction
     const attackDirection = this.facingRight ? 1 : -1;
@@ -316,6 +315,10 @@ export class Player {
         if (attackHitbox.intersects(enemyBounds)) {
           // Enemy is within the attack hitbox, apply damage
           enemy.takeDamage(this.stats.damage);
+        }
+
+        if (enemy.isAttackingWilePlayerIsAttacking) {
+          this.takeDamage(enemy.stats.damage, 2000);
         }
       }
     }
