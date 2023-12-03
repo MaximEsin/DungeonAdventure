@@ -135,7 +135,9 @@ export class Player {
     this.defeatedEnemies++;
     // Check if the player has defeated all enemies (adjust the condition accordingly)
     if (this.defeatedEnemies === this.game.enemies.length) {
-      this.showWinScreen();
+      setTimeout(() => {
+        this.showWinScreen();
+      }, 2000);
     }
   }
 
