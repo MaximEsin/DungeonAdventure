@@ -26,6 +26,7 @@ export class Player {
   private isActing: boolean = false;
   public stats: PlayerStats;
   private game: Game;
+  private defeatedEnemies: number = 0;
 
   constructor(app: PIXI.Application, game: Game) {
     this.app = app;
@@ -120,6 +121,22 @@ export class Player {
     this.animatedSprite.play();
 
     app.stage.addChild(this.animatedSprite);
+  }
+
+  private showWinScreen(): void {
+    const winScreen = document.getElementById("winScreen");
+    if (winScreen) {
+      winScreen.classList.add("screen");
+      winScreen.classList.remove("hidden");
+    }
+  }
+
+  public defeatEnemy(): void {
+    this.defeatedEnemies++;
+    // Check if the player has defeated all enemies (adjust the condition accordingly)
+    if (this.defeatedEnemies === this.game.enemies.length) {
+      this.showWinScreen();
+    }
   }
 
   public getStats(): PlayerStats {

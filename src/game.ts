@@ -79,5 +79,12 @@ export class Game {
 
     // Show the initial interface
     this.interfaceManager.updateInterface(this.player.getStats());
+
+    // Hide the win screen if it's visible
+    const winScreen = document.getElementById("winScreen");
+    if (winScreen) {
+      winScreen.classList.add("hidden");
+      winScreen.classList.remove("screen");
+    }
   }
 }

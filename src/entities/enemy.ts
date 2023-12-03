@@ -112,6 +112,9 @@ export class Enemy {
 
     // Disable enemy movement
     this.shouldMove = false;
+
+    // Notify the player that an enemy is defeated
+    this.player.defeatEnemy();
   }
 
   private getRandomPosition(max: number): number {
